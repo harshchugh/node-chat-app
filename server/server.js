@@ -3,6 +3,7 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
+var {generateMessage} = require('./utils/message');
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
@@ -16,21 +17,19 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.emit('newEmail', {
-    from:'test@example.com',
-    text:"Hey Whats going on ?",
-    createdAt: 123
-  });
+  // socket.emit('newEmail', {
+  //   from:'test@example.com',
+  //   text:"Hey Whats going on ?",
+  //   createdAt: 123
+  // });
+  //
+  // socket.on('createEmail', (email)=>{
+  //   console.log('Create email ', email);
+  // });
 
-  socket.on('createEmail', (email)=>{
-    console.log('Create email ', email);
-  });
+  socket.emit('newMessage', generateMessage('Pappu', 'GodBless you.'));
 
-  socket.emit('newMessage', {
-    from:'Pappu',
-    text:"God bless you." ,
-    createdAt: 231
-  });
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined.'));
 
   socket.on('createMessage', (msg)=>{
     console.log('Create Message :', msg);
